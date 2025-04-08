@@ -18,13 +18,19 @@ app.on("ready", () => {
   }
   pollResources(mainWindow);
   
-  ipcMainHandle("getStaticData", () => {
-    return getStaticData();
-  })
+  // ipcMainHandle("getStaticData", () => {
+  //   return getStaticData();
+  // })
   
-  createTray(mainWindow);
+  ipcMainHandle("broadcastMessage", (data) => {
+    const windows = BrowserWindow.getAllWindows();
+    windows.forEach((win) => {
+      win.webContents.send("broadcastMessage", data);
+    });
+  });
+  // createTray(mainWindow);
   handleCloseEvents(mainWindow);
-  createMenu(mainWindow);
+  // createMenu(mainWindow);
 })
 
 function handleCloseEvents(mainWindow: BrowserWindow) {
