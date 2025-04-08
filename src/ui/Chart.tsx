@@ -9,7 +9,7 @@ export type ChartProps = {
 export function Chart(props: ChartProps) {
   const preparedData = useMemo(() => {
     const points = props.data.map((point) => ({value: point * 100}))
-  return [...points, ...Array.from({ length: props.maxDataPoints - points.length }).map(item => ({ value: undefined }))]
+  return [...points, ...Array.from({ length: props.maxDataPoints - points.length }).map(() => ({ value: undefined }))]
   }, [props.data, props.maxDataPoints]);
   return <BaseChart data={preparedData} />;
 }
