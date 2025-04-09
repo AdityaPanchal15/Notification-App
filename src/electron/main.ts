@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Notification } from "electron";
 import { ipcMainHandle, isDev } from './util.js';
 import { getStaticData, pollResources } from './resourceManager.js';
 import { getPreloadPath, getUIPath } from './pathResolver.js';
@@ -24,8 +24,8 @@ function startWebSocket() {
       // Store it
       notifications.unshift(notif);
 
-      // Show system notification
-      // new Notification({ title, body }).show();
+      // ✅ Show system notification
+      new Notification({ title, body: body.message }).show();
 
       // Send to all open windows (e.g., tray popup)
       BrowserWindow.getAllWindows().forEach(win => {
