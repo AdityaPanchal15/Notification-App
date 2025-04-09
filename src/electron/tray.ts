@@ -1,4 +1,4 @@
-import { Tray, BrowserWindow, screen } from 'electron';
+import { Tray, BrowserWindow, screen, Menu } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getAssetPath, getPreloadPath } from './pathResolver.js';
@@ -12,6 +12,13 @@ let popupWindow: BrowserWindow;
 export function createTray() {
   const iconPath = path.join(getAssetPath(), process.platform === "darwin" ? "trayIconTemplate.png" : "trayIcon.png");
   const tray = new Tray(iconPath);
+  
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+      label: "Quit",
+      click: () => app.quit()
+    }
+  ]));
 
   tray.on('click', (_, bounds) => {
     if (popupWindow && popupWindow.isVisible()) {
