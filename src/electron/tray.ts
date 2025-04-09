@@ -1,32 +1,54 @@
-import { Tray, BrowserWindow, screen, Menu } from 'electron';
+// main.js
+import { Tray, BrowserWindow, screen, Menu, app, ipcMain } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getAssetPath, getPreloadPath } from './pathResolver.js';
 import { isDev } from './util.js';
-import { app } from "electron";
 
 const __filename = fileURLToPath(import.meta.url);
 
-let popupWindow: BrowserWindow;
+let tray: Tray | null = null;
+let popupWindow: BrowserWindow | null = null;
+let notificationData: string[] = []; // Store notifications persistently
 
 export function createTray() {
-  const iconPath = path.join(getAssetPath(), process.platform === "darwin" ? "trayIconTemplate.png" : "trayIcon.png");
-  const tray = new Tray(iconPath);
+  const iconPath = path.join(
+    getAssetPath(),
+    process.platform === 'darwin' ? 'trayIconTemplate.png' : 'trayIcon.png'
+  );
   
-  tray.setContextMenu(Menu.buildFromTemplate([
-    {
-      label: "Quit",
-      click: () => app.quit()
-    }
-  ]));
+  tray = new Tray(iconPath);
+  tray.setToolTip('My App');
+  
+  // Initial menu with no notifications
+  updateTrayMenu();
 
   tray.on('click', (_, bounds) => {
     if (popupWindow && popupWindow.isVisible()) {
       popupWindow.hide();
-    } else {      
+    } else {
       showPopup(bounds);
     }
   });
+
+  return tray;
+}
+
+// Update tray menu with stored notifications
+export function updateTrayMenu() {
+  if (!tray || tray.isDestroyed()) {
+    createTray();
+  }
+  const menuItems = notificationData.length
+    ? notificationData.map((msg, idx) => ({ label: msg }))
+    : [{ label: 'No notifications yet' }];
+  
+  const contextMenu = Menu.buildFromTemplate([
+    ...menuItems,
+    { type: 'separator' },
+    { label: 'Quit', click: () => app.quit() },
+  ]);
+  tray?.setContextMenu(contextMenu);
 }
 
 function showPopup(bounds: Electron.Rectangle) {
@@ -40,28 +62,55 @@ function showPopup(bounds: Electron.Rectangle) {
   const x = Math.min(bounds.x, screenWidth - popupWidth);
   const y = Math.min(bounds.y, screenHeight - popupHeight);
 
-  popupWindow = new BrowserWindow({
-    width: popupWidth,
-    height: popupHeight,
-    x,
-    y,
-    frame: false,
-    alwaysOnTop: true,
-    resizable: false,
-    skipTaskbar: true,
-    webPreferences: {
-      preload: getPreloadPath(),
-      contextIsolation: true,
-      nodeIntegration: false,
-    },
-  });
-
-  if (isDev()) {
-    popupWindow.loadURL('http://localhost:5123/popup.html');
+  if (popupWindow && !popupWindow.isDestroyed()) {
+    popupWindow.setPosition(x, y);
+    popupWindow.show();
+    popupWindow.webContents.send('update-notifications', notificationData); // Send data to popup
   } else {
-    const filePath = path.join(app.getAppPath(), '/dist-react/popup.html');;
-    popupWindow.loadFile(filePath);
-  }
+    popupWindow = new BrowserWindow({
+      width: popupWidth,
+      height: popupHeight,
+      x,
+      y,
+      frame: false,
+      alwaysOnTop: true,
+      resizable: false,
+      skipTaskbar: true,
+      webPreferences: {
+        preload: getPreloadPath(),
+        contextIsolation: true,
+        nodeIntegration: false,
+      },
+    });
 
-  popupWindow.on('blur', () => popupWindow.hide());
+    if (isDev()) {
+      popupWindow.loadURL('http://localhost:5123/popup.html');
+    } else {
+      const filePath = path.join(app.getAppPath(), 'dist-react/popup.html');
+      popupWindow.loadFile(filePath);
+    }
+
+    popupWindow.on('blur', () => popupWindow?.hide());
+    popupWindow.webContents.on('did-finish-load', () => {
+      popupWindow?.webContents.send('update-notifications', notificationData); // Initial data load
+    });
+  }
 }
+
+// Handle WebSocket notifications from renderer (React)
+ipcMain.on('new-notification', (event, data) => {
+  notificationData.push(data.message); // Store the notification
+  updateTrayMenu(); // Update tray with new data
+  if (popupWindow && !popupWindow.isDestroyed() && popupWindow.isVisible()) {
+    popupWindow.webContents.send('update-notifications', notificationData); // Update popup
+  }
+});
+
+// Optional: Clear notifications if needed
+ipcMain.on('clear-notifications', () => {
+  notificationData = [];
+  updateTrayMenu();
+  if (popupWindow && !popupWindow.isDestroyed()) {
+    popupWindow.webContents.send('update-notifications', notificationData);
+  }
+});
