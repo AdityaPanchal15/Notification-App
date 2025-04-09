@@ -6,7 +6,7 @@ const App = () => {
     let socket: WebSocket;
   
     const connectWebSocket = () => {
-      socket = new WebSocket("https://45db-180-211-118-54.ngrok-free.app");
+      socket = new WebSocket("https://4bc8-180-211-118-54.ngrok-free.app");
   
       socket.onopen = () => {
         console.log("WebSocket connected");

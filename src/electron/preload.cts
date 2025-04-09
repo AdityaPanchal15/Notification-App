@@ -23,13 +23,22 @@ electron.contextBridge.exposeInMainWorld("electron", {
     ipcInvoke("sendBroadcastMessage", message),
   
   showNotification: (title: string, body: any) => {
-    new Notification(title, {  
-      body,
-      // icon: body.icon ? path.join(__dirname, body.icon) : undefined
-    });
-  }
+    // new Notification(title, {  
+    //   body,
+    //   // icon: body.icon ? path.join(__dirname, body.icon) : undefined
+    // });
+    // ipcRenderer.invoke('storeNotification', title, body);
+    ipcRenderer.invoke('storeNotification', { title, body });
+  },
+  deleteNotification: (notificationIndex: number) => {
+    ipcRenderer.invoke('deleteNotification', { notificationIndex });
+  },
+  getNotifications: (): Promise<any[]> => ipcRenderer.invoke('getNotifications'),
   
-  
+  on: (channel: string, listener: (data: any) => void) =>
+    ipcRenderer.on(channel, (_event, data) => listener(data)),
+  removeListener: (channel: string, listener: (data: any) => void) =>
+    ipcRenderer.removeListener(channel, listener),
 } satisfies Window['electron']);
 
 export const ipcInvoke = (channel: string, ...args: any[]): Promise<any> => {

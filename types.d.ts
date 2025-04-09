@@ -17,6 +17,9 @@ type EventPayloadMapping = {
   getStaticData: StaticData;
   changeView: View;
   broadcastMessage: { title: string; body: string }; 
+  storeNotification: { res: any, title: string; body: string };
+  getNotifications: void;
+  deleteNotification: { notificationIndex: number };
 }
 
 type UnsubscribeFunction = () => void;
@@ -30,6 +33,10 @@ interface Window {
     onBroadcastMessage: (callback: (msg: { title: string; body: string }) => void) => void;
     sendBroadcastMessage: (message: string) => Promise<void>;
     
-    showNotification: (title: string, body: string, icon?: string) => void
+    showNotification: (title: string, body: string, icon?: string) => void;
+    deleteNotification: (notificationId: number) => void;
+    getNotifications: () => Promise<any[]>;
+    on: (channel: string, listener: (data: any) => void) => void;
+    removeListener: (channel: string, listener: (data: any) => void) => void;
   }
 }
