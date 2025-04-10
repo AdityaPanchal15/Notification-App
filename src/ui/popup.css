@@ -1,10 +1,18 @@
-/******* Popup *******/
+*{
+	box-sizing: border-box;
+}
+ 
 .popup-wrapper {
-  padding: 16px;
-  width: 340px;
+  padding:0;
+  width: 100%;
+  height: calc(100vh - 20px);
+  overflow: auto;
   font-family: 'Segoe UI', sans-serif;
-  color: #333;
-  background: #fefefe;
+  color: #333;  background:#e9e9e9;
+  border-radius:10px;
+  box-shadow: 0 0 15px rgba(240, 237, 237, 0.5);
+  /* border:5px solid #fff; */
+ 
 }
 
 .popup-title {
@@ -12,13 +20,17 @@
   font-weight: 600;
   margin-bottom: 12px;
   text-align: center;
+  margin:0;
+  margin-right: 0px;
+  margin-right: auto;
 }
 .notification-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  list-style:none;
+  padding:15px;
+  margin:0;
+  /* max-height: calc(100vh - 300px); */
+  overflow:auto;
 }
-
 .no-notifications {
   text-align: center;
   padding: 20px;
@@ -28,8 +40,8 @@
   border-radius: 12px;
   margin: 20px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
 
+}
 .notification-card {
   background: #ffffff;
   border: 1px solid #e0e0e0;
@@ -39,11 +51,9 @@
   margin-bottom: 16px;
   padding-bottom: 8px;
 }
-
 .notification-card:hover {
   cursor: pointer;
 }
-
 .notification-image {
   /* padding: 8px; */
   display: flex;
@@ -51,53 +61,52 @@
   align-items: center;
   border-bottom: 1px solid #e0e0e0;
 }
-
 .notification-image img {
   width: 100%;
   height: 200px;
 }
-
 .notification-content {
   display: flex;
   align-items: flex-start;
   padding: 10px;
   gap: 12px;
+  position: relative;
+}
+.delete-button{
+  position: absolute;
+  right: 8px;
+  top: 4px;
+  background-color: #fff;
 }
 
 .notification-icon {
-  width: 36px;
-  height: 36px;
+  width: 70px;
+  height: 70px;
 }
-
 .notification-icon img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   object-fit: cover;
 }
-
 .notification-text {
   flex: 1;
 }
-
 .notification-title {
   font-size: 15px;
   font-weight: bold;
   margin-bottom: 4px;
 }
-
 .notification-body {
   font-size: 13px;
   color: #444;
 }
-
 .notification-time {
   font-size: 11px;
   color: #888;
   text-align: right;
   padding: 0 12px 6px;
 }
-
 .delete-button {
   background: transparent;
   border: none;
@@ -108,7 +117,73 @@
   align-self: start;
   padding: 2px;
 }
-
 .delete-button:hover {
   color: #e63946;
+}
+ 
+.d-flex {
+	display: flex;
+}
+.align-items-center{
+	align-items: center;
+}
+.justify-content-between{
+	justify-content: center;
+}
+.align-items-start{
+  align-items: start;
+}
+.bg-white{
+	background-color: #e9e9e9;
+}
+.sticky-top{
+  padding: 5px 10px 8px 10px;
+  top: 0;
+  position: sticky;
+  border-bottom: rgba(0,0,0,0.05);
+  z-index: 9;
+}
+.close-all{
+  color: #003e70;
+  font-size: 14px;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.popup-wrapper::-webkit-scrollbar {
+  width: 5px;  height: 4px;
+}
+.popup-wrapper::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+.popup-wrapper::-webkit-scrollbar-thumb {
+background-color: darkgrey;
+outline: 0px solid slategrey;
+}
+.arrow{
+  border:0;
+  background-color: transparent;
+  padding: 0;
+  width: 15px;
+  margin-left: 5px;
+}
+.notification-body{
+  overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: initial;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    width: calc(100% - 20px);
+}
+
+.notification-body.active{
+  -webkit-line-clamp: inherit;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+.notification-body.active ~ .arrow{
+  transform: rotate(180deg);
 }

@@ -56,8 +56,8 @@ function showPopup(bounds: Electron.Rectangle) {
   const screenWidth = display.workArea.width;
   const screenHeight = display.workArea.height;
 
-  const popupWidth = 400;
-  const popupHeight = 600;
+  const popupWidth = 380;
+  const popupHeight = 800;
 
   const x = Math.min(bounds.x, screenWidth - popupWidth);
   const y = Math.min(bounds.y, screenHeight - popupHeight);
@@ -65,7 +65,7 @@ function showPopup(bounds: Electron.Rectangle) {
   if (popupWindow && !popupWindow.isDestroyed()) {
     popupWindow.setPosition(x, y);
     popupWindow.show();
-    popupWindow.webContents.send('update-notifications', notificationData); // Send data to popup
+    popupWindow.webContents.send("update-notifications", notificationData); // Send data to popup
   } else {
     popupWindow = new BrowserWindow({
       width: popupWidth,
@@ -76,6 +76,7 @@ function showPopup(bounds: Electron.Rectangle) {
       alwaysOnTop: true,
       resizable: false,
       skipTaskbar: true,
+      backgroundColor: "#e9e9e9",
       webPreferences: {
         preload: getPreloadPath(),
         contextIsolation: true,
@@ -84,15 +85,15 @@ function showPopup(bounds: Electron.Rectangle) {
     });
 
     if (isDev()) {
-      popupWindow.loadURL('http://localhost:5123/popup.html');
+      popupWindow.loadURL("http://localhost:5123/popup.html");
     } else {
-      const filePath = path.join(app.getAppPath(), 'dist-react/popup.html');
+      const filePath = path.join(app.getAppPath(), "dist-react/popup.html");
       popupWindow.loadFile(filePath);
     }
 
-    popupWindow.on('blur', () => popupWindow?.hide());
-    popupWindow.webContents.on('did-finish-load', () => {
-      popupWindow?.webContents.send('update-notifications', notificationData); // Initial data load
+    popupWindow.on("blur", () => popupWindow?.hide());
+    popupWindow.webContents.on("did-finish-load", () => {
+      popupWindow?.webContents.send("update-notifications", notificationData); // Initial data load
     });
   }
 }
