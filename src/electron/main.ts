@@ -5,7 +5,7 @@ import { getPreloadPath, getUIPath } from './pathResolver.js';
 import { createTray } from './tray.js';
 import { createMenu } from './menu.js';
 
-const notifications: any[] = [];
+let notifications: any[] = [];
 
 function startWebSocket() {
   let socket: WebSocket;
@@ -28,11 +28,10 @@ function startWebSocket() {
       new Notification({ title, body: body.message }).show();
 
       // Send to all open windows (e.g., tray popup)
-      BrowserWindow.getAllWindows().forEach(win => {
+      BrowserWindow.getAllWindows().forEach((win) => {
         win.webContents.send("new-notification", notif);
       });
       console.log("notifications=>", notifications);
-      
     };
 
     socket.onclose = () => {
@@ -52,7 +51,7 @@ function startWebSocket() {
 app.on("ready", () => {
   // Start background WebSocket
   startWebSocket();
-  
+
   // const mainWindow = new BrowserWindow({
   //   webPreferences: {
   //     preload: getPreloadPath(),
@@ -64,33 +63,37 @@ app.on("ready", () => {
   //   mainWindow.loadFile(getUIPath())
   // }
   // pollResources(mainWindow); // hide main window
-  
+
   // ipcMainHandle("getStaticData", () => {
   //   return getStaticData();
   // })
-  
+
   ipcMainHandle("broadcastMessage", (data) => {
     const windows = BrowserWindow.getAllWindows();
     windows.forEach((win) => {
       win.webContents.send("broadcastMessage", data);
     });
   });
-  ipcMainHandle("storeNotification", ({title, body}) => {
+  ipcMainHandle("storeNotification", ({ title, body }) => {
     const data = { title, body, timestamp: Date.now() };
     notifications.push(data);
   });
   ipcMainHandle("deleteNotification", ({ notificationIndex }) => {
+    if (notificationIndex == -1) {
+      notifications = [];
+      return;
+    }
     notifications.splice(notificationIndex, 1);
   });
   ipcMainHandle("getNotifications", () => {
     console.log("getNotification", notifications);
-    
+
     return notifications;
   });
   createTray();
   // handleCloseEvents(mainWindow);
   // createMenu(mainWindow);
-})
+});
 
 function handleCloseEvents(mainWindow: BrowserWindow) {
   let willClose = false;

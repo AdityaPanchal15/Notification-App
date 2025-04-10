@@ -57,7 +57,7 @@ function showPopup(bounds: Electron.Rectangle) {
   const screenHeight = display.workArea.height;
 
   const popupWidth = 400;
-  const popupHeight = 400;
+  const popupHeight = 600;
 
   const x = Math.min(bounds.x, screenWidth - popupWidth);
   const y = Math.min(bounds.y, screenHeight - popupHeight);
