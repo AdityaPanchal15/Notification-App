@@ -26,7 +26,8 @@ const Popup = () => {
     };
   }, []);
   
-  const deleteNotification = (notificationIndex: number) => {
+  const deleteNotification = (e: any, notificationIndex: number) => {
+    e.stopPropagation();
     window.electron.deleteNotification(notificationIndex);
     setNotifications((prevState) => prevState.filter((_, index) => notificationIndex !== index));
   }
@@ -61,7 +62,7 @@ const Popup = () => {
                 <div className="notification-title">{n.title}</div>
                 <div className="notification-body">{n.body.message}</div>
               </div>
-              <button className="delete-button" onClick={() => deleteNotification(i)}>✖</button>
+              <button className="delete-button" onClick={(e) => deleteNotification(e, i)}>✖</button>
             </div>
             <div className="notification-time">
               {new Date(n.timestamp).toLocaleTimeString()}

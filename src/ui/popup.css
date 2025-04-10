@@ -40,6 +40,10 @@
   padding-bottom: 8px;
 }
 
+.notification-card:hover {
+  cursor: pointer;
+}
+
 .notification-image {
   /* padding: 8px; */
   display: flex;
