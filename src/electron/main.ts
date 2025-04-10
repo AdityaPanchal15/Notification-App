@@ -11,7 +11,7 @@ function startWebSocket() {
   let socket: WebSocket;
 
   const connect = () => {
-    socket = new WebSocket("ws://localhost:8080");
+    socket = new WebSocket("https://86ef-180-211-118-134.ngrok-free.app");
 
     socket.onopen = () => {
       console.log("WebSocket connected");
@@ -47,7 +47,7 @@ function startWebSocket() {
 
   connect();
 }
-app.setAppUserModelId('Notification App');
+app.setAppUserModelId('Notification | Electron');
 app.on("ready", () => {
   // Start background WebSocket
   startWebSocket();

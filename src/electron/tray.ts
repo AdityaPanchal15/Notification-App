@@ -18,7 +18,7 @@ export function createTray() {
   );
   
   tray = new Tray(iconPath);
-  tray.setToolTip('Notification App');
+  tray.setToolTip('Notification | Electron');
   
   // Initial menu with no notifications
   updateTrayMenu();
