@@ -47,7 +47,7 @@ function startWebSocket() {
 
   connect();
 }
-
+app.setAppUserModelId('Notification App');
 app.on("ready", () => {
   // Start background WebSocket
   startWebSocket();

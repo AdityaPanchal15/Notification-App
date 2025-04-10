@@ -39,13 +39,8 @@ export function updateTrayMenu() {
   if (!tray || tray.isDestroyed()) {
     createTray();
   }
-  const menuItems = notificationData.length
-    ? notificationData.map((msg, idx) => ({ label: msg }))
-    : [{ label: 'No notifications yet' }];
   
   const contextMenu = Menu.buildFromTemplate([
-    ...menuItems,
-    { type: 'separator' },
     { label: 'Quit', click: () => app.quit() },
   ]);
   tray?.setContextMenu(contextMenu);
