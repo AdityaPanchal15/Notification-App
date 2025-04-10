@@ -1,5 +1,5 @@
 // main.js
-import { Tray, BrowserWindow, screen, Menu, app, ipcMain } from 'electron';
+import { Tray, BrowserWindow, screen, Menu, app, ipcMain, shell } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getAssetPath, getPreloadPath } from './pathResolver.js';
@@ -18,7 +18,7 @@ export function createTray() {
   );
   
   tray = new Tray(iconPath);
-  tray.setToolTip('My App');
+  tray.setToolTip('Notification App');
   
   // Initial menu with no notifications
   updateTrayMenu();
@@ -79,7 +79,7 @@ function showPopup(bounds: Electron.Rectangle) {
       webPreferences: {
         preload: getPreloadPath(),
         contextIsolation: true,
-        nodeIntegration: false,
+        nodeIntegration: true,
       },
     });
 
@@ -104,6 +104,11 @@ ipcMain.on('new-notification', (event, data) => {
   if (popupWindow && !popupWindow.isDestroyed() && popupWindow.isVisible()) {
     popupWindow.webContents.send('update-notifications', notificationData); // Update popup
   }
+});
+
+// Listen for URL open requests from renderer
+ipcMain.on('open-url', (_, url: string) => {
+  shell.openExternal(url);
 });
 
 // Optional: Clear notifications if needed

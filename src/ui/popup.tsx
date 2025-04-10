@@ -30,6 +30,10 @@ const Popup = () => {
     window.electron.deleteNotification(notificationIndex);
     setNotifications((prevState) => prevState.filter((_, index) => notificationIndex !== index));
   }
+  
+  const handleClick = (url: string) => {
+    window.electron.openUrl(url);
+  };
 
   return (
     <div className="popup-wrapper">
@@ -39,7 +43,7 @@ const Popup = () => {
     ) : (
       <ul className="notification-list">
         {notifications.map((n, i) => (
-          <li key={i} className="notification-card">
+          <li key={i} className="notification-card" onClick={() => handleClick(n.body.url)}>
             {n.body.image && (
               <div className="notification-image">
                 <img src={n.body.image} alt="notification visual" />

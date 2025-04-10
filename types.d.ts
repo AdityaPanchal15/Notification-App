@@ -38,5 +38,7 @@ interface Window {
     getNotifications: () => Promise<any[]>;
     on: (channel: string, listener: (data: any) => void) => void;
     removeListener: (channel: string, listener: (data: any) => void) => void;
+    // Add openUrl for your specific need
+    openUrl: (url: string) => void;
   }
 }

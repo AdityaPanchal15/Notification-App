@@ -39,6 +39,7 @@ electron.contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.on(channel, (_event, data) => listener(data)),
   removeListener: (channel: string, listener: (data: any) => void) =>
     ipcRenderer.removeListener(channel, listener),
+  openUrl: (url) => ipcRenderer.send('open-url', url),
 } satisfies Window['electron']);
 
 export const ipcInvoke = (channel: string, ...args: any[]): Promise<any> => {
