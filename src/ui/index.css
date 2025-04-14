@@ -148,3 +148,52 @@ button:focus-visible {
 .notification-link:hover {
   text-decoration: underline !important;
 }
+
+/*************** Preferences ******************/
+.notification-preferences {
+  padding: 20px;
+}
+
+.preference-section {
+  margin-bottom: 20px;
+}
+
+.preference-section label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.preference-section input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.preference-section .app-list {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.preference-section .app-chip {
+  padding: 5px 10px;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+}
+
+.preference-section .app-chip.disabled {
+  background-color: #a0a0a0;
+  color: #fff;
+}
+
+.preference-section select, .preference-section input[type="datetime-local"] {
+  margin-right: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.preference-section .other-options {
+  margin-left: 10px;
+  color: #666;
+}
+/***********************************************/
