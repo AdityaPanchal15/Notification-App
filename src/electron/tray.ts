@@ -35,7 +35,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 800,
-    resizable: false,
+    resizable: true,
     webPreferences: {
       preload: getPreloadPath(), // <- make sure this is correct
       contextIsolation: true,

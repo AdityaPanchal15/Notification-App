@@ -69,7 +69,7 @@ button:focus-visible {
 
 /************ Notifications ************/
 .notification-container {
-  padding: 1rem;
+  padding: 0 1rem 1rem 1rem;
   max-height: 90vh;
   overflow-y: auto;
   background-color: #f9fafb;
@@ -139,12 +139,12 @@ button:focus-visible {
   color: #888;
 }
 
-.notification-link {
-  font-size: 0.85rem;
-  color: #007bff;
-  text-decoration: none;
+.notification-link, .delete-btn, .mark-read-btn {
+  font-size: 0.85rem !important;
+  color: #007bff !important;
+  text-decoration: none !important;
 }
 
 .notification-link:hover {
-  text-decoration: underline;
+  text-decoration: underline !important;
 }

@@ -18,6 +18,8 @@
     "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64"
   },
   "dependencies": {
+    "bootstrap": "^5.3.5",
+    "bootstrap-icons": "^1.11.3",
     "os-utils": "^0.0.14",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -25,26 +25,25 @@ export default function Notifications() {
     };
   }, []);
 
-  // const deleteNotification = (e: any, notificationIndex: number = -1) => {
-  //   e.stopPropagation();
-  //   window.electron.deleteNotification(notificationIndex);
+  const deleteNotification = (notificationIndex: number = -1) => {
+    window.electron.deleteNotification(notificationIndex);
 
-  //   if (notificationIndex == -1) {
-  //     setNotifications([]);
-  //     return;
-  //   }
-  //   setNotifications((prevState) =>
-  //     prevState.filter((_, index) => notificationIndex !== index)
-  //   );
-  // };
+    if (notificationIndex == -1) {
+      setNotifications([]);
+      return;
+    }
+    setNotifications((prevState) =>
+      prevState.filter((_, index) => notificationIndex !== index)
+    );
+  };
 
-  // const handleClick = (url: string) => {
-  //   window.electron.openUrl(url);
-  // };
+  const handleClick = (url: string) => {
+    window.electron.openUrl(url);
+  };
 
   return (
     <div className="notification-container">
-      <h2>Notifications</h2>
+      <h4>My Notifications {notifications.length ? `(${notifications.length})` : ""}</h4>
       {!notifications.length && <p>No new notifications</p>}
       {notifications.map((n, index) => (
         <div key={index} className="notification-card">
@@ -61,9 +60,15 @@ export default function Notifications() {
               <span className="notification-time">
                 {new Date(n.timestamp).toLocaleString()}
               </span>
-              <a href={n.body.url} target="_blank" rel="noopener noreferrer" className="notification-link">
+              <button type='button' className="delete-btn btn btn-link" onClick={() => deleteNotification(index)}>
+                <i className="bi bi-trash"></i> Delete
+              </button>
+              <span className='mark-read-btn'>
+                <i className="bi bi-check2-all"></i> Mark as read
+              </span>
+              <button type='button' className="notification-link btn btn-link" onClick={() => handleClick(n.body.url)}>
                 Read More →
-              </a>
+              </button>
             </div>
           </div>
         </div>
