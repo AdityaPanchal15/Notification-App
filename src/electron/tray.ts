@@ -1,11 +1,8 @@
 // main.js
 import { Tray, BrowserWindow, screen, Menu, app, ipcMain, shell } from 'electron';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { getAssetPath, getPreloadPath } from './pathResolver.js';
-import { isDev } from './util.js';
-
-const __filename = fileURLToPath(import.meta.url);
+import { getAssetPath, getPreloadPath, getUIPath } from './pathResolver.js';
+import { handleCloseEvents, isDev } from './util.js';
 
 let tray: Tray | null = null;
 let popupWindow: BrowserWindow | null = null;
@@ -34,6 +31,38 @@ export function createTray() {
   return tray;
 }
 
+const createWindow = () => {
+  const mainWindow = new BrowserWindow({
+    width: 800,
+    height: 800,
+    resizable: false,
+    webPreferences: {
+      preload: getPreloadPath(), // <- make sure this is correct
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  });
+
+  if (isDev()) {
+    mainWindow.loadURL('http://localhost:5123'); // <- adjust if your React index page differs
+  } else {
+    mainWindow.loadFile(path.join(app.getAppPath(), 'dist-react/index.html'));
+  }
+  return mainWindow;
+}
+
+// Function to create a login popup
+const openPage = (url: string) => {
+  const pageWindow = createWindow();
+  pageWindow?.webContents.on('did-finish-load', () => {
+    pageWindow?.webContents.send('navigate-to', url);
+  });
+
+  pageWindow?.show();
+  pageWindow?.focus();
+  handleCloseEvents(pageWindow);
+};
+
 // Update tray menu with stored notifications
 export function updateTrayMenu() {
   if (!tray || tray.isDestroyed()) {
@@ -41,7 +70,39 @@ export function updateTrayMenu() {
   }
   
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Quit', click: () => app.quit() },
+    { 
+      label: 'Popout', 
+      click: () => {
+        openPage('/notifications')
+      },
+      icon: path.join(getAssetPath(), 'icons', 'popout.png')
+    },
+    { 
+      label: 'Preferences', 
+      click: () => {
+        openPage('/preferences');
+      },
+      icon: path.join(getAssetPath(), 'icons', 'preferences.png')
+    },
+    { 
+      label: 'Login', 
+      click: () => {
+        openPage('/login');
+      },
+      icon: path.join(getAssetPath(), 'icons', 'login.png')
+    },
+    // { 
+    //   label: 'Logout', 
+    //   click: () => {
+    //     console.log('Logout clicked');
+    //   },
+    //   icon: path.join(getAssetPath(), 'icons', 'logout.png')
+    // },
+    { 
+      label: 'Quit', 
+      click: () => app.quit(),
+      icon: path.join(getAssetPath(), 'icons', 'quit.png')
+    },
   ]);
   tray?.setContextMenu(contextMenu);
 }

@@ -1,4 +1,4 @@
-import { ipcMain, WebContents, WebFrameMain } from 'electron';
+import { app, BrowserWindow, ipcMain, WebContents, WebFrameMain } from 'electron';
 import { getUIPath } from './pathResolver.js';
 import { pathToFileURL } from 'node:url';
 
@@ -28,4 +28,26 @@ export function validateEventFrame(frame: WebFrameMain | null) {
   if(frame && frame.url !== pathToFileURL(getUIPath()).toString()) {
     throw new Error('Malicious event');
   }
+}
+
+export function handleCloseEvents(mainWindow?: BrowserWindow | null) {
+  let willClose = false;
+  mainWindow?.on('close', (e) => {
+    if(willClose) {
+      return;
+    }
+    e.preventDefault();
+    mainWindow.hide();
+    if(app.dock) {
+      app.dock.hide();
+    }
+  });
+  
+  app.on("before-quit", () => {
+    willClose = true;
+  })
+  
+  mainWindow?.on("show", () => {
+    willClose = false;
+  })
 }

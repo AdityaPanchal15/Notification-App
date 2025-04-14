@@ -26,6 +26,10 @@ type UnsubscribeFunction = () => void;
 
 interface Window {
   electron: {
+    ipcRenderer: {
+      on: (channel: string, listener: (event: any, data: any) => void) => void;
+      removeAllListeners: (channel: string) => void;
+    };
     subscribeStatics: (callback: (statistics: Statistics) => void) => UnsubscribeFunction;
     getStaticData: () => Promise<StaticData>;
     subscribeChangeView: (callback: (view: View) => void) => UnsubscribeFunction;
@@ -40,5 +44,6 @@ interface Window {
     removeListener: (channel: string, listener: (data: any) => void) => void;
     // Add openUrl for your specific need
     openUrl: (url: string) => void;
+    // onPageChange
   }
 }

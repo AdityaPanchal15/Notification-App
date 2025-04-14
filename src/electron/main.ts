@@ -1,7 +1,5 @@
 import { app, BrowserWindow, Notification } from "electron";
 import { ipcMainHandle, isDev } from './util.js';
-import { getStaticData, pollResources } from './resourceManager.js';
-import { getPreloadPath, getUIPath } from './pathResolver.js';
 import { createTray } from './tray.js';
 import { createMenu } from './menu.js';
 
@@ -11,7 +9,7 @@ function startWebSocket() {
   let socket: WebSocket;
 
   const connect = () => {
-    socket = new WebSocket("https://86ef-180-211-118-134.ngrok-free.app");
+    socket = new WebSocket("http://40.122.42.30:8086");
 
     socket.onopen = () => {
       console.log("WebSocket connected");
@@ -94,25 +92,3 @@ app.on("ready", () => {
   // handleCloseEvents(mainWindow);
   // createMenu(mainWindow);
 });
-
-function handleCloseEvents(mainWindow: BrowserWindow) {
-  let willClose = false;
-  mainWindow.on('close', (e) => {
-    if(willClose) {
-      return;
-    }
-    e.preventDefault();
-    mainWindow.hide();
-    if(app.dock) {
-      app.dock.hide();
-    }
-  });
-  
-  app.on("before-quit", () => {
-    willClose = true;
-  })
-  
-  mainWindow.on("show", () => {
-    willClose = false;
-  })
-}
