@@ -1,7 +1,6 @@
 import { app, BrowserWindow, Notification } from "electron";
 import { ipcMainHandle, isDev } from './util.js';
 import { createTray } from './tray.js';
-import { createMenu } from './menu.js';
 
 let notifications: any[] = [];
 
@@ -9,7 +8,7 @@ function startWebSocket() {
   let socket: WebSocket;
 
   const connect = () => {
-    socket = new WebSocket("http://40.122.42.30:8086");
+    socket = new WebSocket("ws://localhost:8086");
 
     socket.onopen = () => {
       console.log("WebSocket connected");
@@ -21,7 +20,7 @@ function startWebSocket() {
 
       // Store it
       notifications.unshift(notif);
-
+      
       // ✅ Show system notification
       new Notification({ title, body: body.message }).show();
 
@@ -50,28 +49,6 @@ app.on("ready", () => {
   // Start background WebSocket
   startWebSocket();
 
-  // const mainWindow = new BrowserWindow({
-  //   webPreferences: {
-  //     preload: getPreloadPath(),
-  //   }
-  // });
-  // if(isDev()) {
-  //   mainWindow.loadURL("http://localhost:5123");
-  // } else {
-  //   mainWindow.loadFile(getUIPath())
-  // }
-  // pollResources(mainWindow); // hide main window
-
-  // ipcMainHandle("getStaticData", () => {
-  //   return getStaticData();
-  // })
-
-  ipcMainHandle("broadcastMessage", (data) => {
-    const windows = BrowserWindow.getAllWindows();
-    windows.forEach((win) => {
-      win.webContents.send("broadcastMessage", data);
-    });
-  });
   ipcMainHandle("storeNotification", ({ title, body }) => {
     const data = { title, body, timestamp: Date.now() };
     notifications.push(data);
@@ -89,6 +66,4 @@ app.on("ready", () => {
     return notifications;
   });
   createTray();
-  // handleCloseEvents(mainWindow);
-  // createMenu(mainWindow);
 });

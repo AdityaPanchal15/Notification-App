@@ -2,32 +2,8 @@ import { ipcRenderer } from 'electron';
 
 const electron = require('electron');
 
-electron.contextBridge.exposeInMainWorld("electron", {
-  subscribeStatics: (callback) =>
-    ipcOn("statistics", (stats) => {
-      callback(stats);
-    }),
-  subscribeChangeView: (callback) =>
-    ipcOn("changeView", (stats) => {
-      callback(stats);
-    }),
-  getStaticData: () => ipcInvoke('getStaticData'),
-  
-  // 🆕 Subscribe to broadcast messages
-  onBroadcastMessage: (callback: (msg: { title: string, body: string, icon: string }) => void) => {
-    ipcRenderer.on("broadcastMessage", (_, msg) => callback(msg));
-  },
-
-  // 🆕 Send message to broadcast
-  sendBroadcastMessage: (message: string) =>
-    ipcInvoke("sendBroadcastMessage", message),
-  
+electron.contextBridge.exposeInMainWorld("electron", { 
   showNotification: (title: string, body: any) => {
-    // new Notification(title, {  
-    //   body,
-    //   // icon: body.icon ? path.join(__dirname, body.icon) : undefined
-    // });
-    // ipcRenderer.invoke('storeNotification', title, body);
     ipcRenderer.invoke('storeNotification', { title, body });
   },
   deleteNotification: (notificationIndex: number) => {

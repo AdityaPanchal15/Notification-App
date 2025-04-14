@@ -1,22 +1,22 @@
-type Statistics = {
-  cpuUsage: number;
-  ramUsage: number; 
-  storageUsage: number; 
-}
+// type Statistics = {
+//   cpuUsage: number;
+//   ramUsage: number; 
+//   storageUsage: number; 
+// }
 
-type StaticData = {
-  totalStorage: number;
-  cpuModel: string;
-  totalMemoryGB: number;
-}
+// type StaticData = {
+//   totalStorage: number;
+//   cpuModel: string;
+//   totalMemoryGB: number;
+// }
 
 type View = 'CPU' | 'RAM' | 'STORAGE';
 
 type EventPayloadMapping = {
-  statistics: Statistics;
-  getStaticData: StaticData;
+  // statistics: Statistics;
+  // getStaticData: StaticData;
   changeView: View;
-  broadcastMessage: { title: string; body: string }; 
+  // broadcastMessage: { title: string; body: string }; 
   storeNotification: { res: any, title: string; body: string };
   getNotifications: void;
   deleteNotification: { notificationIndex: number };
@@ -30,12 +30,9 @@ interface Window {
       on: (channel: string, listener: (event: any, data: any) => void) => void;
       removeAllListeners: (channel: string) => void;
     };
-    subscribeStatics: (callback: (statistics: Statistics) => void) => UnsubscribeFunction;
-    getStaticData: () => Promise<StaticData>;
-    subscribeChangeView: (callback: (view: View) => void) => UnsubscribeFunction;
-    
-    onBroadcastMessage: (callback: (msg: { title: string; body: string }) => void) => void;
-    sendBroadcastMessage: (message: string) => Promise<void>;
+
+    // onBroadcastMessage: (callback: (msg: { title: string; body: string }) => void) => void;
+    // sendBroadcastMessage: (message: string) => Promise<void>;
     
     showNotification: (title: string, body: string, icon?: string) => void;
     deleteNotification: (notificationId: number) => void;

@@ -1,7 +1,7 @@
 // main.js
 import { Tray, BrowserWindow, screen, Menu, app, ipcMain, shell } from 'electron';
 import path from 'path';
-import { getAssetPath, getPreloadPath, getUIPath } from './pathResolver.js';
+import { getAssetPath, getPreloadPath } from './pathResolver.js';
 import { handleCloseEvents, isDev } from './util.js';
 
 let tray: Tray | null = null;
