@@ -97,13 +97,14 @@ button:focus-visible {
 }
 
 .preference-section {
+  display: flex;
+  align-items: flex-start;
   margin-bottom: 20px;
 }
 
 .preference-section label {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
 }
 
 .preference-section input[type="checkbox"] {

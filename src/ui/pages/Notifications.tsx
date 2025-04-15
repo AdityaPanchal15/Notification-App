@@ -27,7 +27,8 @@ export default function Notifications() {
     };
   }, []);
 
-  const deleteNotification = (notificationIndex: number = -1) => {
+  const deleteNotification = (e: any, notificationIndex: number = -1) => {
+    e.stopPropagation();
     window.electron.deleteNotification(notificationIndex);
 
     if (notificationIndex == -1) {
@@ -75,17 +76,14 @@ export default function Notifications() {
         </thead>
         <tbody>
           {notifications.length ? notifications.map((n, index) => (
-            <tr key={index}>
+            <tr key={index} style={{ cursor: 'pointer' }} onClick={() => handleClick(n.body.url)}>
               <td><img src={n.body.image} alt="news" className="notification-image" /></td>
               <td>{n.title}</td>
               <td>{n.body.message}</td>
               <td>{new Date(n.timestamp).toLocaleString()}</td>
               <td>{n.app?.label}</td>
               <td>
-                <button type='button' className="delete-btn btn btn-link" onClick={() => handleClick(n.body.url)}>
-                  <i className="bi bi-box-arrow-up-right"></i> Open
-                </button> |
-                <button type='button' className="delete-btn btn btn-link" onClick={() => deleteNotification(index)}>
+                <button type='button' className="delete-btn btn btn-link" onClick={(e) => deleteNotification(e, index)}>
                   <i className="bi bi-trash"></i> Delete
                 </button>
               </td>
