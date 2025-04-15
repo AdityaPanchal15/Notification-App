@@ -23,7 +23,12 @@ electron.contextBridge.exposeInMainWorld("electron", {
     removeAllListeners: (channel) => {
       ipcRenderer.removeAllListeners(channel);
     }
-  }
+  },
+  
+  // Authentication manager
+  getAuthStatus: async () => ipcRenderer.invoke('getAuthStatus'),
+  storeTokens: (accessToken: string, refreshToken: string) => ipcRenderer.send('store-tokens', { accessToken, refreshToken }),
+  clearTokens: () => ipcRenderer.send('clear-tokens'),
 } satisfies Window['electron']);
 
 export const ipcInvoke = (channel: string, ...args: any[]): Promise<any> => {

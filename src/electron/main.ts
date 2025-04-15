@@ -5,6 +5,7 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { isLoggedIn } from './tokenManager.js';
 
 let notifications: any[] = [];
 
@@ -28,6 +29,9 @@ app.on("ready", () => {
     console.log("getNotification", notifications);
 
     return notifications;
+  });
+  ipcMainHandle('getAuthStatus', () => {
+    return isLoggedIn();
   });
   createTray();
 });

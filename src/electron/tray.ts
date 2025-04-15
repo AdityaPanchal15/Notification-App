@@ -3,6 +3,7 @@ import { Tray, BrowserWindow, screen, Menu, app, ipcMain, shell } from 'electron
 import path from 'path';
 import { getAssetPath, getPreloadPath } from './pathResolver.js';
 import { handleCloseEvents, isDev } from './util.js';
+import { clearTokens, isLoggedIn, setTokens } from './tokenManager.js';
 
 let tray: Tray | null = null;
 let popupWindow: BrowserWindow | null = null;
@@ -69,6 +70,26 @@ export function updateTrayMenu() {
     createTray();
   }
   
+  const dynamicMenu = [];
+  if (isLoggedIn()) {
+    dynamicMenu.push({
+      label: 'Logout',
+      click: () => {
+        console.log('Logout clicked');
+        clearTokens();
+        updateTrayMenu();
+        openPage('/login');
+      },
+      icon: path.join(getAssetPath(), 'icons', 'logout.png'),
+    });
+  } else {
+    dynamicMenu.push({
+      label: 'Login',
+      click: () => openPage('/login'),
+      icon: path.join(getAssetPath(), 'icons', 'login.png'),
+    });
+  }
+  
   const contextMenu = Menu.buildFromTemplate([
     { 
       label: 'Popout', 
@@ -84,20 +105,7 @@ export function updateTrayMenu() {
       },
       icon: path.join(getAssetPath(), 'icons', 'preferences.png')
     },
-    { 
-      label: 'Login', 
-      click: () => {
-        openPage('/login');
-      },
-      icon: path.join(getAssetPath(), 'icons', 'login.png')
-    },
-    // { 
-    //   label: 'Logout', 
-    //   click: () => {
-    //     console.log('Logout clicked');
-    //   },
-    //   icon: path.join(getAssetPath(), 'icons', 'logout.png')
-    // },
+    ...dynamicMenu,
     { 
       label: 'Quit', 
       click: () => app.quit(),
@@ -161,6 +169,16 @@ ipcMain.on('new-notification', (event, data) => {
   if (popupWindow && !popupWindow.isDestroyed() && popupWindow.isVisible()) {
     popupWindow.webContents.send('update-notifications', notificationData); // Update popup
   }
+});
+
+ipcMain.on('store-tokens', (_, { accessToken, refreshToken }) => {
+  setTokens(accessToken, refreshToken);
+  updateTrayMenu();
+});
+
+ipcMain.on('clear-tokens', () => {
+  clearTokens();
+  updateTrayMenu();
 });
 
 // Listen for URL open requests from renderer

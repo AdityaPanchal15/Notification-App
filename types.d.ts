@@ -1,25 +1,9 @@
-// type Statistics = {
-//   cpuUsage: number;
-//   ramUsage: number; 
-//   storageUsage: number; 
-// }
-
-// type StaticData = {
-//   totalStorage: number;
-//   cpuModel: string;
-//   totalMemoryGB: number;
-// }
-
-type View = 'CPU' | 'RAM' | 'STORAGE';
-
 type EventPayloadMapping = {
-  // statistics: Statistics;
-  // getStaticData: StaticData;
   changeView: View;
-  // broadcastMessage: { title: string; body: string }; 
   storeNotification: { res: any, title: string; body: string };
   getNotifications: void;
   deleteNotification: { notificationIndex: number };
+  getAuthStatus: boolean;
 }
 
 type UnsubscribeFunction = () => void;
@@ -41,6 +25,8 @@ interface Window {
     removeListener: (channel: string, listener: (data: any) => void) => void;
     // Add openUrl for your specific need
     openUrl: (url: string) => void;
-    // onPageChange
+    getAuthStatus: () => Promise<boolean>;
+    storeTokens: (accessToken: string, refreshToken: string) => void;
+    clearTokens: () => void;
   }
 }
