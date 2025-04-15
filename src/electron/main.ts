@@ -43,8 +43,8 @@ function startWebSocket() {
     };
 
     socket.onmessage = (event) => {
-      const { title, body } = JSON.parse(event.data);
-      const notif = { title, body, timestamp: Date.now() };
+      const { title, body, app } = JSON.parse(event.data);
+      const notif = { title, app, body, timestamp: Date.now() };
 
       // Store it
       notifications.unshift(notif);
