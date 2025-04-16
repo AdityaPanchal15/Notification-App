@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import axios from 'axios';
+import axiosInstance from '../axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,19 +31,22 @@ const Login = () => {
     if (!password) {
       setPasswordError('Password is required');
       isValid = false;
-    } else if (!passwordRegex.test(password)) {
-      setPasswordError(
-        'Password must be at least 8 characters, include 1 digit and 1 special character'
-      );
-      isValid = false;
-    }
+    } 
+    // else if (!passwordRegex.test(password)) {
+    //   setPasswordError(
+    //     'Password must be at least 8 characters, include 1 digit and 1 special character'
+    //   );
+    //   isValid = false;
+    // }
 
     if (!isValid) return;
-    
-    // Add your login logic here (e.g., API call)
-    console.log({ email, password, rememberMe });
-    window.electron.storeTokens('accessToken', 'refreshToken');
-    window.location.href = '/preferences'; // or use useNavigate
+
+    axiosInstance.post('/api/auth/login', {
+      email, password
+    }).then((res: any) => {
+      window.electron.setAuth({ accessToken: res.data.token, ...res.data.user });
+      window.location.href = '/preferences'; // or use useNavigate
+    })
   };
 
   return (

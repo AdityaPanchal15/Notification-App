@@ -75,7 +75,6 @@ export function updateTrayMenu() {
     dynamicMenu.push({
       label: 'Logout',
       click: () => {
-        console.log('Logout clicked');
         clearTokens();
         updateTrayMenu();
         openPage('/login');
@@ -171,8 +170,8 @@ ipcMain.on('new-notification', (event, data) => {
   }
 });
 
-ipcMain.on('store-tokens', (_, { accessToken, refreshToken }) => {
-  setTokens(accessToken, refreshToken);
+ipcMain.on('setAuth', (_, auth) => {
+  setTokens(auth);
   updateTrayMenu();
 });
 

@@ -26,8 +26,8 @@ electron.contextBridge.exposeInMainWorld("electron", {
   },
   
   // Authentication manager
-  getAuthStatus: async () => ipcRenderer.invoke('getAuthStatus'),
-  storeTokens: (accessToken: string, refreshToken: string) => ipcRenderer.send('store-tokens', { accessToken, refreshToken }),
+  getAuth: async () => ipcRenderer.invoke('getAuth'),
+  setAuth: (auth: any) => ipcRenderer.send('setAuth', auth),
   clearTokens: () => ipcRenderer.send('clear-tokens'),
 } satisfies Window['electron']);
 

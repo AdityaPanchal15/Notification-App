@@ -3,24 +3,18 @@ import Store from 'electron-store';
 
 const store = new Store();
 
-export const setTokens = (accessToken: string, refreshToken: string) => {
-  store.set('accessToken', accessToken);
-  store.set('refreshToken', refreshToken);
+export const setTokens = (auth: any) => {
+  store.set('auth', auth);
 };
 
-export const getAccessToken = (): string | undefined => {
-  return store.get('accessToken') as string | undefined;
-};
-
-export const getRefreshToken = (): string | undefined => {
-  return store.get('refreshToken') as string | undefined;
+export const getAuth = (): any => { 
+  return store.get('auth');
 };
 
 export const clearTokens = () => {
-  store.delete('accessToken');
-  store.delete('refreshToken');
+  store.delete('auth');
 };
 
 export const isLoggedIn = (): boolean => {
-  return !!store.get('accessToken') && !!store.get('refreshToken');
+  return !!store.get('auth');
 };

@@ -5,8 +5,10 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { isLoggedIn } from './tokenManager.js';
+import { getAuth } from './tokenManager.js';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 let notifications: any[] = [];
 
 app.setAppUserModelId('Notification | Electron');
@@ -30,17 +32,17 @@ app.on("ready", () => {
 
     return notifications;
   });
-  ipcMainHandle('getAuthStatus', () => {
-    return isLoggedIn();
+  ipcMainHandle('getAuth', () => {
+    return getAuth();
   });
   createTray();
 });
 
 function startWebSocket() {
   let socket: WebSocket;
-
+  const wsUrl = process.env.VITE_WS_URL || '';
   const connect = () => {
-    socket = new WebSocket("ws://localhost:8086");
+    socket = new WebSocket(wsUrl);
 
     socket.onopen = () => {
       console.log("WebSocket connected");
@@ -54,7 +56,7 @@ function startWebSocket() {
       notifications.unshift(notif);
       
       // ✅ Show system notification
-      downloadImage(body.image, (localPath: string) => {
+      downloadImage(body.imageUrl, (localPath: string) => {
         if (!localPath) return;
     
         const notification = new Notification({

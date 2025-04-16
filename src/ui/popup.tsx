@@ -40,7 +40,7 @@ const Popup = () => {
 
   function groupByApp(notifications: NotificationItem[]) {
     return notifications.reduce((acc: any, item: any) => {
-      const key = item.app.appId;
+      const key = item.app;
       if (!acc[key]) acc[key] = [];
       acc[key].push(item);
       return acc;
@@ -90,9 +90,9 @@ const Popup = () => {
               Clear all
             </button>
           </div>
-          {Object.entries(groupedNotifications).map(([appKey, notifications]) => {
+          {Object.entries(groupedNotifications).map(([appKey, combinedNotifications]) => {
             const isOpen = openGroups[appKey];
-            const appLabel = notifications[0].app.label;
+            const appLabel = combinedNotifications[0].app;
 
             return (
               <div key={appKey} className="mb-3 border rounded">
@@ -101,20 +101,20 @@ const Popup = () => {
                   style={{ cursor: 'pointer' }}
                   onClick={() => toggleGroup(appKey)}
                 >
-                  <h6 className="mb-0">{appLabel}</h6>
+                  <h6 className="mb-0">{appLabel} ({combinedNotifications.length})</h6>
                   <span>{isOpen ? '−' : '+'}</span>
                 </div>
                 {isOpen && (
                   <ul className="notification-list">
-                    {notifications.map((n: any, i: any) => (
+                    {combinedNotifications.map((n: any, i: any) => (
                       <li
                         key={i}
                         className="notification-card"
-                        onClick={() => handleClick(n.body.url)}
+                        onClick={() => handleClick(n.body.redirectUrl)}
                       >
-                        {n.body.image && (
+                        {n.body.imageUrl && (
                           <div className="notification-image">
-                            <img src={n.body.image} alt="notification visual" />
+                            <img src={n.body.imageUrl} alt="notification visual" />
                           </div>
                         )}
                         <div className="notification-content">
@@ -125,8 +125,8 @@ const Popup = () => {
                             ✖
                           </button>
                           <div className="notification-icon">
-                            {n.body.icon ? (
-                              <img src={n.body.icon} alt="icon" />
+                            {n.body.dynamicIcon ? (
+                              <img src={n.body.dynamicIcon} alt="icon" />
                             ) : (
                               <span>📩</span>
                             )}

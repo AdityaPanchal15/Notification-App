@@ -3,7 +3,7 @@ type EventPayloadMapping = {
   storeNotification: { res: any, title: string; body: string };
   getNotifications: void;
   deleteNotification: { notificationIndex: number };
-  getAuthStatus: boolean;
+  getAuth: void;
 }
 
 type UnsubscribeFunction = () => void;
@@ -25,8 +25,8 @@ interface Window {
     removeListener: (channel: string, listener: (data: any) => void) => void;
     // Add openUrl for your specific need
     openUrl: (url: string) => void;
-    getAuthStatus: () => Promise<boolean>;
-    storeTokens: (accessToken: string, refreshToken: string) => void;
+    getAuth: () => Promise<any>;
+    setAuth: (auth: any) => void;
     clearTokens: () => void;
   }
 }
