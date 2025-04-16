@@ -8,13 +8,22 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const auth = await window.electron.getAuth();
-      if(auth && auth.accessToken) {
-        setIsAuthed(true);
-      } else {
+      console.log('Checking auth...');
+      const timeout = setTimeout(() => {
+        console.warn('Auth check taking too long...');
+      }, 3000);
+
+      try {
+        const auth = await window.electron.getAuth();
+        clearTimeout(timeout);
+        console.log('Auth result:', auth);
+        setIsAuthed(!!auth?.accessToken);
+      } catch (err) {
+        console.error('Error checking auth:', err);
         setIsAuthed(false);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
     checkAuth();
   }, []);

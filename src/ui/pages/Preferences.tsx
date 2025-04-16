@@ -6,6 +6,7 @@ export default function Preferences() {
   const [snoozeTime, setSnoozeTime] = useState('04/15/2025 03:30 PM');
   const [groupByApp, setGroupByApp] = useState(true);
   const [muteNotification, setMuteNotification] = useState('custom');
+  // @ts-ignore
   const [selectedNotificationTypes, setSelectedNotificationTypes]: any = useState([]);
 
   const options = [

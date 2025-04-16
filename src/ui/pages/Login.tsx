@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import axios from 'axios';
 import axiosInstance from '../axios';
 
 const Login = () => {
@@ -20,24 +19,12 @@ const Login = () => {
     if (!email) {
       setEmailError('Email is required');
       isValid = false;
-    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setEmailError('Invalid email format');
-      isValid = false;
     }
-
-    // Password validation
-    const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
     if (!password) {
       setPasswordError('Password is required');
       isValid = false;
     } 
-    // else if (!passwordRegex.test(password)) {
-    //   setPasswordError(
-    //     'Password must be at least 8 characters, include 1 digit and 1 special character'
-    //   );
-    //   isValid = false;
-    // }
 
     if (!isValid) return;
 
@@ -45,7 +32,6 @@ const Login = () => {
       email, password
     }).then((res: any) => {
       window.electron.setAuth({ accessToken: res.data.token, ...res.data.user });
-      window.location.href = '/preferences'; // or use useNavigate
     })
   };
 
@@ -64,7 +50,6 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter email"
-            required
           />
           {emailError && <div className="text-danger">{emailError}</div>}
         </div>
@@ -79,7 +64,6 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter password"
-            required
           />
           {passwordError && <div className="text-danger">{passwordError}</div>}
         </div>
@@ -98,11 +82,6 @@ const Login = () => {
         <button type="submit" className="btn btn-primary w-100">
           Login
         </button>
-        {/* <div className="text-center mt-3">
-          <a href="#" className="text-decoration-none">
-            Forgot Password?
-          </a>
-        </div> */}
       </form>
     </div>
   );

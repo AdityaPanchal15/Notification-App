@@ -40,7 +40,7 @@ app.on("ready", () => {
 
 function startWebSocket() {
   let socket: WebSocket;
-  const wsUrl = process.env.VITE_WS_URL || '';
+  const wsUrl = process.env.VITE_WS_URL || 'http://40.122.42.30:8086';
   const connect = () => {
     socket = new WebSocket(wsUrl);
 

@@ -21,14 +21,21 @@ export function ipcWebContentsSend<Key extends keyof EventPayloadMapping>(key: K
 }
 
 export function validateEventFrame(frame: WebFrameMain | null) {
+  if (!frame) throw new Error('Missing frame');
 
-  if(isDev() && frame && new URL(frame.url).host === 'localhost:5123') {
-    return;
+  const url = frame.url;
+
+  if (isDev()) {
+    if (new URL(url).host === 'localhost:5123') return;
   }
-  if(frame && frame.url !== pathToFileURL(getUIPath()).toString()) {
+
+  // In production, check that it's loading your built index.html
+  if (!url.startsWith('file://') || !url.includes('dist-react/index.html')) {
+    console.warn('Blocked IPC from:', url);
     throw new Error('Malicious event');
   }
 }
+
 
 export function handleCloseEvents(mainWindow?: BrowserWindow | null) {
   let willClose = false;

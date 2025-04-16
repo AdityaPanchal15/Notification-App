@@ -6,7 +6,7 @@ function IPCListener() {
 
   useEffect(() => {
     const handleNavigation = (_event: any, path: string) => {
-      navigate(path);
+      setTimeout(() => navigate(path), 0);
     };
 
     window.electron.ipcRenderer.on('navigate-to', handleNavigation);
