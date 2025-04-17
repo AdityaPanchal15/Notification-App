@@ -1,12 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axiosInstance from '../axios';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  
+  useEffect(() => {
+    document.title = 'Notify | Login';
+  }, []);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -27,17 +33,25 @@ const Login = () => {
     } 
 
     if (!isValid) return;
-
+    
+    setIsLoading(true);
     axiosInstance.post('/api/auth/login', {
       email, password
     }).then((res: any) => {
       window.electron.setAuth({ accessToken: res.data.token, ...res.data.user });
+    }).catch(err => {
+      toast.error(err.response.data.error, {
+        position: 'top-right',
+      });
+    }).finally(() => {
+      setIsLoading(false);
     })
   };
 
   return (
     <div className="login-container">
-      <h2 className="text-center mb-4">Login</h2>
+      <ToastContainer />
+      <h4 className="text-center mb-4">Login to Notify app</h4>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
@@ -79,8 +93,9 @@ const Login = () => {
             Remember me
           </label>
         </div>
-        <button type="submit" className="btn btn-primary w-100">
-          Login
+        <button type="submit" className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+          Login 
+          { isLoading && <span className='spinner-border spinner-border-sm'></span>}
         </button>
       </form>
     </div>

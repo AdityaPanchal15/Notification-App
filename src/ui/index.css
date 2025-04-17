@@ -143,7 +143,7 @@ button:focus-visible {
 
 /*************** Login ********************/
 .login-container {
-  max-width: 400px;
+  max-width: 300px;
   padding: 20px;
   margin: 50px auto;
   background: #fff;

@@ -3,11 +3,13 @@ import { Tray, BrowserWindow, screen, Menu, app, ipcMain, shell } from 'electron
 import path from 'path';
 import { getAssetPath, getPreloadPath } from './pathResolver.js';
 import { handleCloseEvents, isDev } from './util.js';
-import { clearTokens, isLoggedIn, setTokens } from './tokenManager.js';
+import { Notification } from 'electron';
+import { clearTokens, getAuth, isLoggedIn, setTokens } from './tokenManager.js';
 
 let tray: Tray | null = null;
 let popupWindow: BrowserWindow | null = null;
 let notificationData: string[] = []; // Store notifications persistently
+let loginWindow: BrowserWindow | null = null;
 
 export function createTray() {
   const iconPath = path.join(
@@ -36,13 +38,16 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 800,
-    resizable: true,
+    minimizable: false,
+    maximizable: false,
     webPreferences: {
       preload: getPreloadPath(), // <- make sure this is correct
       contextIsolation: true,
       nodeIntegration: false,
     },
   });
+  
+  mainWindow.setMenu(null);
 
   if (isDev()) {
     mainWindow.loadURL('http://localhost:5123'); // <- adjust if your React index page differs
@@ -55,8 +60,17 @@ const createWindow = () => {
 // Function to create a login popup
 const openPage = (url: string) => {
   const pageWindow = createWindow();
+  if (url === '/login') {
+    loginWindow = pageWindow;
+  }
   pageWindow?.webContents.on('did-finish-load', () => {
     pageWindow?.webContents.send('navigate-to', url);
+  });
+  
+  pageWindow?.on('closed', () => {
+    if (loginWindow === pageWindow) {
+      loginWindow = null;
+    }
   });
 
   pageWindow?.show();
@@ -72,6 +86,26 @@ export function updateTrayMenu() {
   
   const dynamicMenu = [];
   if (isLoggedIn()) {
+    const auth = getAuth();
+    dynamicMenu.push({ 
+      label: auth.firstName + ' ' + auth.lastName, 
+      icon: path.join(getAssetPath(), 'icons', 'user.png')
+    })
+    dynamicMenu.push({ type: 'separator' as const })
+    dynamicMenu.push({ 
+      label: 'Popout', 
+      click: () => {
+        openPage('/notifications')
+      },
+      icon: path.join(getAssetPath(), 'icons', 'popout.png')
+    })
+    dynamicMenu.push({ 
+      label: 'Preferences', 
+      click: () => {
+        openPage('/preferences');
+      },
+      icon: path.join(getAssetPath(), 'icons', 'preferences.png')
+    })
     dynamicMenu.push({
       label: 'Logout',
       click: () => {
@@ -90,20 +124,6 @@ export function updateTrayMenu() {
   }
   
   const contextMenu = Menu.buildFromTemplate([
-    { 
-      label: 'Popout', 
-      click: () => {
-        openPage('/notifications')
-      },
-      icon: path.join(getAssetPath(), 'icons', 'popout.png')
-    },
-    { 
-      label: 'Preferences', 
-      click: () => {
-        openPage('/preferences');
-      },
-      icon: path.join(getAssetPath(), 'icons', 'preferences.png')
-    },
     ...dynamicMenu,
     { 
       label: 'Quit', 
@@ -173,6 +193,18 @@ ipcMain.on('new-notification', (event, data) => {
 ipcMain.on('setAuth', (_, auth) => {
   setTokens(auth);
   updateTrayMenu();
+  
+  // On login show notification and close login window.
+  if (loginWindow && !loginWindow.isDestroyed()) {
+    const notification = new Notification({
+      title: "Login Successful",
+      body: "User logged in successfully.",
+    });
+  
+    notification.show();
+    loginWindow.close(); // 🔒 closes the login window
+    loginWindow = null;
+  }
 });
 
 ipcMain.on('clear-tokens', () => {
