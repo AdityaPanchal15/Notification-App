@@ -1,5 +1,5 @@
 import { app, BrowserWindow, Notification } from "electron";
-import { ipcMainHandle, isDev } from './util.js';
+import { ipcMainHandle } from './util.js';
 import { createTray } from './tray.js';
 import https from 'https';
 import fs from 'fs';

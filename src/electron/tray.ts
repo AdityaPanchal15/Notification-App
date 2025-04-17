@@ -34,7 +34,7 @@ export function createTray() {
   return tray;
 }
 
-const createWindow = () => {
+const createWindow = (options?: Electron.BrowserWindowConstructorOptions) => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 800,
@@ -45,6 +45,7 @@ const createWindow = () => {
       contextIsolation: true,
       nodeIntegration: false,
     },
+    ...options, // overrides default with custom options
   });
   
   mainWindow.setMenu(null);
@@ -59,7 +60,11 @@ const createWindow = () => {
 
 // Function to create a login popup
 const openPage = (url: string) => {
-  const pageWindow = createWindow();
+  const isLogin = url === '/login';
+  
+  const windowOptions = isLogin ? { width: 340, height: 420, resizable: false } : undefined;
+  
+  const pageWindow = createWindow(windowOptions);
   if (url === '/login') {
     loginWindow = pageWindow;
   }
@@ -198,7 +203,7 @@ ipcMain.on('setAuth', (_, auth) => {
   if (loginWindow && !loginWindow.isDestroyed()) {
     const notification = new Notification({
       title: "Login Successful",
-      body: "User logged in successfully.",
+      body: `Welcome back ${auth.firstName} ${auth.lastName}.`,
     });
   
     notification.show();

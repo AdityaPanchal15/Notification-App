@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import axiosInstance from '../axios';
-import { toast, ToastContainer } from 'react-toastify';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -8,6 +7,7 @@ const Login = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [credentialError, setCredentialError] = useState('');
   
   useEffect(() => {
     document.title = 'Notify | Login';
@@ -37,11 +37,10 @@ const Login = () => {
     axiosInstance.post('/api/auth/login', {
       email, password
     }).then((res: any) => {
+      setCredentialError('');
       window.electron.setAuth({ accessToken: res.data.token, ...res.data.user });
     }).catch(err => {
-      toast.error(err.response.data.error, {
-        position: 'top-right',
-      });
+      setCredentialError(err.response.data.error)
     }).finally(() => {
       setIsLoading(false);
     })
@@ -49,8 +48,8 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <ToastContainer />
       <h4 className="text-center mb-4">Login to Notify app</h4>
+      { credentialError && <h6 className='text-center text-danger mb-2'>{ credentialError }</h6>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">

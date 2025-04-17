@@ -143,11 +143,11 @@ button:focus-visible {
 
 /*************** Login ********************/
 .login-container {
-  max-width: 300px;
-  padding: 20px;
-  margin: 50px auto;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* max-width: 390px; */
+  padding: 20px 0;
+  margin: 0 40px;
+  /* background: #fff; */
+  /* border-radius: 8px; */
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 /********************************************/
