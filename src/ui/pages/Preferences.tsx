@@ -22,12 +22,12 @@ export default function Preferences() {
 
   return (
     <div className="notification-preferences">
-      <h4>My Notification Preferences</h4>
+      <h4 className='mb-4'>My Notification Preferences</h4>
       <div className="preference-section">
         <label htmlFor='mute-notification'>Mute Notification</label>
         <div className="ms-4" id="mute-notification">
           <select
-            className='mb-2'
+            className='mb-2 custom-select'
             value={muteNotification}
             onChange={(e) => setMuteNotification(e.target.value)}
           >
@@ -45,23 +45,26 @@ export default function Preferences() {
       </div>
       <div className="preference-section">
         <label>Snooze Notification for</label>
-        <select
-          className='ms-4'
-          value={snoozeDuration}
-          onChange={(e) => setSnoozeDuration(e.target.value)}
-        >
-          <option value="Custom">Custom</option>
-          <option value="10 mins">10 mins</option>
-          <option value="30 mins">30 mins</option>
-          <option value="45 mins">45 mins</option>
-          <option value="1 hour">1 hour</option>
-        </select>
-        <input
-          type="datetime-local"
-          value={snoozeTime}
-          onChange={(e) => setSnoozeTime(e.target.value)}
-          disabled={snoozeDuration !== 'Custom'}
-        />
+        <div className='ms-4'>
+          <select
+            className='mb-2 custom-select'
+            value={snoozeDuration}
+            onChange={(e) => setSnoozeDuration(e.target.value)}
+          >
+            <option value="Custom">Custom</option>
+            <option value="10 mins">10 mins</option>
+            <option value="30 mins">30 mins</option>
+            <option value="45 mins">45 mins</option>
+            <option value="1 hour">1 hour</option>
+          </select>
+          <input
+            type="datetime-local"
+            className='form-control'
+            value={snoozeTime}
+            onChange={(e) => setSnoozeTime(e.target.value)}
+            disabled={snoozeDuration !== 'Custom'}
+          />
+        </div>
       </div>
       <div className='d-flex'>
         <label className="form-check-label me-2" htmlFor="isGroupCheckbox">
